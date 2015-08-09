@@ -5,11 +5,20 @@ describe Cuboid do
   let(:subject_dimensions){[10,10,10]}
 
   subject {Cuboid.new(*subject_origin.concat(subject_dimensions))}
-  let(:rectangular){Cuboid.new(100,5,5,10,10,10)}
 
   describe "move_to!" do
     it "changes the origin in the simple happy case" do
       expect(subject.move_to!(1,2,3)).to be true
+    end
+
+    it "It should return false if moving to invalid location" do
+      expect(subject.move_to!(-1,2,3)).to be false
+    end
+  end
+
+  describe "initialize" do
+    it "Should throw error if invalid dimensions are specified" do
+      (expect{Cuboid.new(-1,0,0,0,0,0)}).to raise_error ArgumentError
     end
   end
 
@@ -53,13 +62,27 @@ describe Cuboid do
     end
   end
 
-  describe "rotate" do
+  describe "rotate!" do
+    let(:rectangular){Cuboid.new(50,100,100,20,10,10)}
     let(:rotated_rectangular){ r=rectangular.clone;r.rotate!(:x,:y);r }
+    let(:rectangular_on_the_floor_of_the_box){Cuboid.new(1,0,1,1,1,1)}
 
     it "Should swap x,y dimensions" do
       (expect rotated_rectangular.dimensions[:x]).to be rectangular.dimensions[:y]
       (expect rotated_rectangular.dimensions[:y]).to be rectangular.dimensions[:x]
       (expect rotated_rectangular.dimensions[:z]).to be rectangular.dimensions[:z]
+      # Box slides down on rotation
+      (expect rotated_rectangular.origin[:x]).to be 50
+      (expect rotated_rectangular.origin[:y]).to be 80
+      (expect rotated_rectangular.origin[:z]).to be 100
+    end
+
+    it "Rotate box down should not be possible" do
+      (expect rectangular_on_the_floor_of_the_box.rotate!(:x,:y)).to be false
+    end
+
+    it "Rotate box right should be possible" do
+      (expect rectangular_on_the_floor_of_the_box.rotate!(:y,:x)).to be true
     end
 
   end

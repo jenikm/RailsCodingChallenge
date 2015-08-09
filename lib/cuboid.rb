@@ -38,10 +38,11 @@ class Cuboid
   # Does not change state if update failed, returns false
   def rotate!(*plane)
     dimensions = (self.class.swap_dimension self.dimensions,*plane)
+    origin = (self.class.next_origin self.origin, dimensions, plane)
     vertices = (self.class.vertices (self.class.origin_to_center origin, dimensions), dimensions)
     if (self.class.vertices_valid? vertices)
       self.dimensions = dimensions
-      self.origin = dimensions.first
+      self.origin = origin
       true
     else
       false
@@ -66,7 +67,7 @@ class Cuboid
   class << self
 
     def half(v)
-      v / 2
+      v / 2.0
     end
 
     def dimension_names
@@ -102,6 +103,11 @@ class Cuboid
       dimensions.merge({ axis1 => dimensions[axis2], axis2 => dimensions[axis1]} )
     end
 
+    # Figures out what is the next vertex when rotation taking place
+    def next_origin(origin, dimensions, plane)
+      origin.merge({plane[1] => origin[plane[1]] - dimensions[plane[1]]})
+    end
+
     def vertices(center, dimensions, v_number=7)
       if v_number < 0
         []
@@ -119,7 +125,7 @@ class Cuboid
       vertices.first.values.min >= 0
     end
 
-    # @arguemnts [Hash,Hash]
+    # @arguements [Hash,Hash]
     # @return [Hash]
     # Figures out center of cuboid, simplifies formula
     def origin_to_center(origin, dimensions)

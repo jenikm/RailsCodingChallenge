@@ -36,6 +36,7 @@ class Cuboid
   # @return Boolean
   # If rotation is successful, return true
   # Does not change state if update failed, returns false
+  # Rotation is done over the origin, (So the box rolls over based on the plane specified)
   def rotate!(*plane)
     dimensions = (self.class.swap_dimension self.dimensions,*plane)
     origin = (self.class.next_origin self.origin, dimensions, plane)

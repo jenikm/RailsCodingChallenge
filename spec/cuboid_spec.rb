@@ -66,6 +66,8 @@ describe Cuboid do
     let(:rectangular){Cuboid.new(50,100,100,20,10,10)}
     let(:rotated_rectangular){ r=rectangular.clone;r.rotate!(:x,:y);r }
     let(:rectangular_on_the_floor_of_the_box){Cuboid.new(1,0,1,1,1,1)}
+    let(:rectangular_next_to_left_wall){Cuboid.new(0,1,1,1,1,1)}
+    let(:rectangular_next_to_front_wall){Cuboid.new(1,1,0,1,1,1)}
 
     it "Should swap x,y dimensions" do
       (expect rotated_rectangular.dimensions[:x]).to be rectangular.dimensions[:y]
@@ -81,10 +83,21 @@ describe Cuboid do
       (expect rectangular_on_the_floor_of_the_box.rotate!(:x,:y)).to be false
     end
 
-    it "Rotate box right should be possible" do
+    it "Rotate box left should be possible" do
       (expect rectangular_on_the_floor_of_the_box.rotate!(:y,:x)).to be true
     end
 
+    it "Rotate box left should not be possible" do
+      (expect rectangular_next_to_left_wall.rotate!(:y,:x)).to be false
+    end
+
+    it "Rotate box forward should not be possible" do
+      (expect rectangular_next_to_left_wall.rotate!(:z,:x)).to be false
+    end
+
+    it "Rotate box back should be possible" do
+      (expect rectangular_next_to_left_wall.rotate!(:x,:z)).to be true
+    end
   end
 
 end
